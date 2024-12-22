@@ -1,13 +1,28 @@
 package com.example.demo.command.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-public class UserCreatedEvent {
-  private final Long id;
-  private final String name;
-  private final String email;
-  private final Long version;
+@Setter
+@NoArgsConstructor
+public class UserCreatedEvent extends UserEvent {
+  private Long id;
+  private String name;
+  private String email;
+  private Long version;
+
+
+  // Parameterized constructor
+  public UserCreatedEvent(Long id, String name, String email, Long version) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.version = version;
+  }
+
+  // Getters and setters
+  // ...
 }

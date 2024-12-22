@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: test-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.example.demo.command.model"
+        spring.json.type.mapping: "UserCreatedEvent:com.example.demo.command.model.UserCreatedEvent,UserUpdatedEvent:com.example.demo.command.model.UserUpdatedEvent"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

@@ -1,12 +1,18 @@
 package com.example.demo.command.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-public class UserUpdatedEvent {
-  private final Long id;
-  private final String name;
-  private final Long version;
+@Setter
+@NoArgsConstructor
+public class UserUpdatedEvent extends UserEvent {
+  private String name;
+
+  public UserUpdatedEvent(Long id, String name, Long version) {
+    this.id = id;
+    this.name = name;
+    this.version = version;
+  }
 }
