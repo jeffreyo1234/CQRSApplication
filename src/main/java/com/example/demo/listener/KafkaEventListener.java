@@ -30,19 +30,30 @@ public class KafkaEventListener {
   public void handleUserEvents(@Payload ConsumerRecord<String, Object> record) {
     Object event = record.value();
     String eventId = record.key();
-    logger.info("Received event: {} with key: {}", event, eventId);
+    logger.info(
+        "Received event: {} with key: {}, value type: {}",
+        event,
+        eventId,
+        event != null ? event.getClass().getName() : "null");
 
     try {
+      if (event == null) {
+        logger.error("Received null event");
+        return;
+      }
+
       if (record.value() instanceof UserCreatedEvent createdEvent) {
+        logger.info("Processing UserCreatedEvent: {}", createdEvent);
         handleUserCreated(createdEvent);
       } else if (record.value() instanceof UserUpdatedEvent updatedEvent) {
+        logger.info("Processing UserUpdatedEvent: {}", updatedEvent);
         handleUserUpdated(updatedEvent);
       } else {
         logger.warn("Unknown event type: {}", event.getClass().getName());
       }
     } catch (Exception e) {
       logger.error("Error processing event: {} with key: {}", event, eventId, e);
-      throw e; // Let the error handler handle retries
+      throw e;
     }
   }
 
@@ -55,7 +66,6 @@ public class KafkaEventListener {
 
     if (existingProjection.isPresent()) {
       UserProjection projection = existingProjection.get();
-      // Handle duplicate - check if it's truly a duplicate or needs update
       if (event.getVersion() > projection.getVersion()) {
         projection.setName(event.getName());
         projection.setEmail(event.getEmail());
@@ -69,12 +79,15 @@ public class KafkaEventListener {
       try {
         UserProjection userProjection =
             new UserProjection(
-                event.getId(), event.getName(), event.getEmail(), event.getVersion());
-        queryRepository.save(userProjection);
-        logger.info("Saved new UserProjection: {}", userProjection);
+                event.getId(), // Use the event's ID directly
+                event.getName(),
+                event.getEmail(),
+                event.getVersion());
+        UserProjection savedProjection = queryRepository.save(userProjection);
+        logger.info("Saved new UserProjection with ID {}: {}", event.getId(), savedProjection);
       } catch (Exception e) {
-        // Handle potential concurrent insert
-        logger.error("Failed to save UserProjection: {}", event, e);
+        logger.error(
+            "Failed to save UserProjection for event ID {}: {}", event.getId(), e.getMessage(), e);
         throw new EventProcessingException("Failed to save UserProjection", e);
       }
     }

@@ -24,6 +24,8 @@ public class KafkaTestConfig {
   public EmbeddedKafkaBroker embeddedKafkaBroker() {
     EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(1, true, 1, "user-events");
     broker.brokerProperty("listeners", "PLAINTEXT://localhost:0"); // Use an ephemeral port
+    broker.brokerProperty("auto.create.topics.enable", "true");
+
     return broker;
   }
 

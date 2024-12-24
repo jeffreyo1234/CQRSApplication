@@ -5,6 +5,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import com.example.demo.command.model.User;
 import com.example.demo.command.service.UserCommandServiceKafkaProducer;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +22,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/command/users/kafka")
 public class UserCommandControllerKakfa {
+  private static final Logger logger = LoggerFactory.getLogger(UserCommandControllerKakfa.class);
 
   private final UserCommandServiceKafkaProducer userCommandServiceKafkaProducer;
 
   // This method creates a new user
   @PostMapping
   public ResponseEntity<User> createUser(@RequestBody User user) {
+    logger.info("User Command Controller Creating user: {}", user);
+
     User createdUser = userCommandServiceKafkaProducer.createUser(user);
+    logger.info("Created user: {}", user);
+
     return ResponseEntity.ok().contentType(APPLICATION_JSON).body(createdUser);
   }
 
   // This method updates a user
   @PutMapping("/{id}")
   public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+    logger.info("Updating user: {}", user);
     return ResponseEntity.ok(userCommandServiceKafkaProducer.updateUser(id, user));
   }
 
   // This method deletes a user
   @DeleteMapping
   public ResponseEntity<Void> deleteUser(@RequestBody Long id) {
+    logger.info("Deleting user with Id: {}", id);
     userCommandServiceKafkaProducer.deleteUser(id);
     return ResponseEntity.noContent().build();
   }

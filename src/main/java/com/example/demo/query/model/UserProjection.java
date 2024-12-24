@@ -17,8 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_projections")
 public class UserProjection {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long id;  // Remove @GeneratedValue
 
   @Column(nullable = false)
   private String name;

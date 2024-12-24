@@ -4,10 +4,19 @@ spring:
       auto-offset-reset: earliest
       group-id: test-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
+        #        spring.json.trusted.packages: "com.example.demo.command.model"
         spring.json.trusted.packages: "com.example.demo.command.model"
         spring.json.type.mapping: "UserCreatedEvent:com.example.demo.command.model.UserCreatedEvent,UserUpdatedEvent:com.example.demo.command.model.UserUpdatedEvent"
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        session.timeout.ms: 60000
+        heartbeat.interval.ms: 20000
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        request.timeout.ms: 60000
+testcontainers:
+  docker:
+    host: tcp://localhost:2375
