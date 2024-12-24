@@ -17,6 +17,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         request.timeout.ms: 60000
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test
 testcontainers:
   docker:
     host: tcp://localhost:2375
